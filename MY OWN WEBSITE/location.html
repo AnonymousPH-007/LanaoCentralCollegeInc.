@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Location</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .location-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .map-container {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            margin: 20px 0;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .contact-details {
+            background: #222;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            color: #fff;
+        }
+
+        .contact-item i {
+            margin-right: 10px;
+            color: #e50914;
+        }
+
+        .directions-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #e50914;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 10px;
+            transition: background-color 0.3s;
+        }
+
+        .directions-btn:hover {
+            background: #f40612;
+        }
+
+        .back-btn {
+            display: block;
+            width: 200px;
+            margin: 20px auto;
+            padding: 10px;
+            background-color: #e50914;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .back-btn:hover {
+            background-color: #f40612;
+        }
+
+        /* Add new styles */
+        .landmark-container {
+            margin: 20px 0;
+            padding: 20px;
+            background: #222;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .landmark-item {
+            margin: 10px 0;
+            padding: 10px;
+            border-left: 3px solid #e50914;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .transportation-info {
+            margin: 20px 0;
+            padding: 15px;
+            background: #333;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Visit Lanao Central College Inc.</h1>
+    </header>
+    <div class="location-container">
+        <div class="contact-details">
+            <div class="contact-item">
+                <i class="fas fa-map-marker-alt"></i>
+                <p>Lanao Central College Incorporated<br>
+                   Awar St., East Basak Malutlut<br>
+                   Marawi City, Lanao del Sur<br>
+                   Philippines 9700</p>
+            </div>
+            <div class="contact-item">
+                <i class="fas fa-phone"></i>
+                <p>(063) 9123456789</p>
+            </div>
+            <div class="contact-item">
+                <i class="fas fa-envelope"></i>
+                <p>LCCILAYKO@gmail.com</p>
+            </div>
+            <div class="contact-item">
+                <i class="fas fa-clock"></i>
+                <p>Monday - Sunday: 7:00 AM - 5:00 PM</p>
+            </div>
+        </div>
+
+        <div class="landmark-container">
+            <h3><i class="fas fa-landmark"></i> Nearby Landmarks</h3>
+            <div class="landmark-item">
+                <p><strong>• The Generic Pharmacy </strong> - 2 minutes away</p>
+            </div>
+            <div class="landmark-item">
+                <p><strong>• Capitol Hill</strong> - 3 minutes away</p>
+            </div>
+            <div class="landmark-item">
+                <p><strong>• NDRM Function Hall</strong> - 1 minutes away</p>
+            </div>
+        </div>
+
+        <div class="transportation-info">
+            <h3><i class="fas fa-bus"></i> Getting Here</h3>
+            <div class="contact-item">
+                <i class="fas fa-car"></i>
+                <p>Available tricycles and multicabs from Marawi City</p>
+            </div>
+            <div class="contact-item">
+                <i class="fas fa-person-walking"></i>
+                <p>Walking or running if your nearby with the mentioned Landmarks</p>
+            </div>
+        </div>
+
+        <div class="map-container">
+            <iframe
+                width="100%"
+                height="100%"
+                frameborder="0"
+                style="border:0"
+                referrerpolicy="no-referrer-when-downgrade"
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d521.6101971656327!2d124.27568479541992!3d8.005569492173645!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3255910019b6f723%3A0xf30ed01a8f3ad233!2sLanao%20Central%20College%20Inc.!5e1!3m2!1sen!2sph!4v1734594439933!5m2!1sen!2sph" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+
+        <div style="text-align: center; margin: 20px 0;">
+            <a href="https://www.google.com/maps/dir//Lanao+Central+College+Incorporated+Marawi+City+Philippines" 
+               target="_blank" 
+               class="directions-btn">
+                <i class="fas fa-directions"></i> Get Directions
+            </a>
+        </div>
+
+        <div class="contact-details">
+            <h3><i class="fas fa-info-circle"></i> Additional Information</h3>
+            <div class="contact-item">
+                <i class="fas fa-map"></i>
+                <p>Located along The Generic Pharmacy and The Capitol Hill</p>
+            </div>
+            <div class="contact-item">
+                <i class="fas fa-parking"></i>
+                <p>Free parking available for students and visitors</p>
+            </div>
+        </div>
+
+        <button class="back-btn" onclick="location.href='index.html'">Back to Home</button>
+    </div>
+
+    <script>
+        // Add loading state for map
+        window.addEventListener('load', function() {
+            const mapContainer = document.querySelector('.map-container');
+            mapContainer.style.opacity = '1';
+        });
+
+        // Add error handling for map loading
+        const iframe = document.querySelector('iframe');
+        iframe.onerror = function() {
+            const mapContainer = document.querySelector('.map-container');
+            mapContainer.innerHTML = '<p style="text-align: center; padding: 20px;">Unable to load map. Please try again later.</p>';
+        };
+
+        // Add weather widget
+        const weatherContainer = document.createElement('div');
+        weatherContainer.className = 'contact-details';
+        weatherContainer.innerHTML = `
+            <h3><i class="fas fa-cloud"></i> Local Weather</h3>
+            <iframe 
+                src="https://www.meteoblue.com/en/weather/widget/daily/marawi-city_philippines_1701053?geoloc=fixed" 
+                frameborder="0" 
+                scrolling="NO" 
+                allowtransparency="true" 
+                style="width: 100%; height: 150px">
+            </iframe>
+        `;
+        document.querySelector('.location-container').insertBefore(
+            weatherContainer, 
+            document.querySelector('.back-btn')
+        );
+    </script>
+    <footer>
+        <p>&copy; 2024 - ANONYMOUSxPH</p>
+    </footer>
+</body>
+</html>

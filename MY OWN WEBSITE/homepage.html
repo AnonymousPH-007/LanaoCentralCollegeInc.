@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lanao Central College - News & Updates</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .news-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .news-item {
+            width: 100%;
+            max-width: 800px;
+            background: #222;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .news-item:hover {
+            transform: scale(1.02);
+        }
+
+        .news-image {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+        }
+
+        .news-content {
+            padding: 15px;
+        }
+
+        .news-title {
+            color: #e50914;
+            margin-bottom: 10px;
+        }
+
+        .news-description {
+            color: #ddd;
+        }
+
+        .news-meta {
+            display: flex;
+            justify-content: space-between;
+            color: #888;
+            font-size: 0.8rem;
+            margin-top: 10px;
+        }
+
+        .add-news-btn {
+            display: block;
+            width: 200px;
+            margin: 20px auto;
+            padding: 10px;
+            background-color: #e50914;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .add-news-btn:hover {
+            background-color: #f40612;
+        }
+
+        #admin-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .admin-login-form {
+            background: #222;
+            padding: 30px;
+            border-radius: 10px;
+            width: 300px;
+            text-align: center;
+        }
+
+        .admin-login-form input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            background: #333;
+            border: none;
+            color: white;
+            border-radius: 5px;
+        }
+
+        #news-form {
+            display: none;
+            background: #222;
+            padding: 30px;
+            border-radius: 10px;
+            width: 500px;
+        }
+
+        #news-form input, 
+        #news-form textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            background: #333;
+            border: none;
+            color: white;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1 style="text-align: center;">Lanao Central College, Inc.</h1>
+        <p style="text-align: center;">Empowering the next generation with knowledge and values.</p>
+        <button class="back-btn" onclick="location.href='index.html'">Back to Home</button>
+    </header>
+
+    <main>
+        <section>
+            <h2 style="text-align: center; color: #e50914;">School News & Updates</h2>
+            
+            <button class="add-news-btn" onclick="openAdminModal()">
+                Add News (Admin Only)
+            </button>
+
+            <div id="news-container" class="news-container">
+                <!-- News items will be dynamically added here -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Admin Login Modal -->
+    <div id="admin-modal" class="modal">
+        <div class="admin-login-form">
+            <h3>Admin Login</h3>
+            <input type="text" id="admin-username" placeholder="Username">
+            <input type="password" id="admin-password" placeholder="Password">
+            <button onclick="validateAdmin()">Login</button>
+        </div>
+    </div>
+
+    <!-- News Submission Form -->
+    <div id="news-form" class="modal">
+        <form onsubmit="submitNews(event)">
+            <h3>Add News Article</h3>
+            <input type="text" id="news-title" placeholder="News Title" required>
+            <textarea id="news-description" placeholder="News Description" required></textarea>
+            <input type="file" id="news-image" accept="image/*" required>
+            <button type="submit">Submit News</button>
+        </form>
+    </div>
+
+    <script>
+        // Admin Credentials (In a real app, use secure backend authentication)
+        const ADMIN_CREDENTIALS = {
+            username: 'admin',
+            password: 'admin'
+        };
+    
+        // News Storage (Use localStorage for persistence)
+        let newsItems = JSON.parse(localStorage.getItem('newsItems')) || [];
+    
+        // Render News Items
+        function renderNewsItems() {
+            const newsContainer = document.getElementById('news-container');
+            newsContainer.innerHTML = '';
+    
+            newsItems.forEach((news, index) => {
+                const newsElement = document.createElement('div');
+                newsElement.classList.add('news-item');
+                newsElement.innerHTML = `
+                    <img src="${news.image}" alt="${news.title}" class="news-image">
+                    <div class="news-content">
+                        <h3 class="news-title">${news.title}</h3>
+                        <p class="news-description">${news.description}</p>
+                        <div class="news-meta">
+                            <span>${new Date(news.date).toLocaleDateString()}</span>
+                            <button onclick="confirmDeleteNews(${index})">Delete</button>
+                        </div>
+                    </div>
+                `;
+                newsContainer.appendChild(newsElement);
+            });
+        }
+    
+        // Create a modal for delete confirmation and admin authentication
+        function createDeleteConfirmationModal() {
+            const modal = document.createElement('div');
+            modal.id = 'delete-confirm-modal';
+            modal.style.cssText = `
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.8);
+                z-index: 1000;
+                justify-content: center;
+                align-items: center;
+            `;
+    
+            modal.innerHTML = `
+                <div style="background: #222; padding: 30px; border-radius: 10px; width: 300px; text-align: center;">
+                    <h3>Confirm Deletion</h3>
+                    <p>Please enter admin credentials to delete this news post.</p>
+                    <input type="text" id="delete-admin-username" placeholder="Username" style="
+                        width: 100%;
+                        padding: 10px;
+                        margin: 10px 0;
+                        background: #333;
+                        border: none;
+                        color: white;
+                        border-radius: 5px;
+                    ">
+                    <input type="password" id="delete-admin-password" placeholder="Password" style="
+                        width: 100%;
+                        padding: 10px;
+                        margin: 10px 0;
+                        background: #333;
+                        border: none;
+                        color: white;
+                        border-radius: 5px;
+                    ">
+                    <div style="display: flex; justify-content: space-between;">
+                        <button onclick="cancelDelete()" style="
+                            background: #555;
+                            color: white;
+                            border: none;
+                            padding: 10px;
+                            border-radius: 5px;
+                            cursor: pointer;
+                        ">Cancel</button>
+                        <button onclick="authenticateAndDeleteNews()" style="
+                            background: #e50914;
+                            color: white;
+                            border: none;
+                            padding: 10px;
+                            border-radius: 5px;
+                            cursor: pointer;
+                        ">Delete</button>
+                    </div>
+                </div>
+            `;
+    
+            document.body.appendChild(modal);
+            return modal;
+        }
+    
+        // Global variable to store the index of news to be deleted
+        let newsIndexToDelete = null;
+    
+        // Confirm Delete News
+        function confirmDeleteNews(index) {
+            // Create modal if it doesn't exist
+            let deleteModal = document.getElementById('delete-confirm-modal');
+            if (!deleteModal) {
+                deleteModal = createDeleteConfirmationModal();
+            }
+    
+            // Store the index of news to be deleted
+            newsIndexToDelete = index;
+    
+            // Show the delete confirmation modal
+            deleteModal.style.display = 'flex';
+        }
+    
+        // Cancel Delete
+        function cancelDelete() {
+            const deleteModal = document.getElementById('delete-confirm-modal');
+            deleteModal.style.display = 'none';
+            newsIndexToDelete = null;
+        }
+    
+        // Authenticate and Delete News
+        function authenticateAndDeleteNews() {
+            // Check if an index is stored
+            if (newsIndexToDelete === null) return;
+    
+            // Get input values
+            const username = document.getElementById('delete-admin-username').value;
+            const password = document.getElementById('delete-admin-password').value;
+    
+            // Validate credentials
+            if (username === ADMIN_CREDENTIALS.username && 
+                password === ADMIN_CREDENTIALS.password) {
+                
+                // Remove the news item
+                newsItems.splice(newsIndexToDelete, 1);
+                
+                // Update localStorage
+                localStorage.setItem('newsItems', JSON.stringify(newsItems));
+                
+                // Re-render news items
+                renderNewsItems();
+    
+                // Hide the delete modal
+                const deleteModal = document.getElementById('delete-confirm-modal');
+                deleteModal.style.display = 'none';
+    
+                // Reset the index
+                newsIndexToDelete = null;
+    
+                // Show success message
+                alert('News post deleted successfully.');
+            } else {
+                // Show error for invalid credentials
+                alert('Invalid admin credentials. Deletion cancelled.');
+            }
+        }
+    
+        // Open Admin Modal
+        function openAdminModal() {
+            document.getElementById('admin-modal').style.display = 'flex';
+        }
+    
+        // Validate Admin
+        function validateAdmin() {
+            const username = document.getElementById('admin-username').value;
+            const password = document.getElementById('admin-password').value;
+    
+            if (username === ADMIN_CREDENTIALS.username && 
+                password === ADMIN_CREDENTIALS.password) {
+                document.getElementById('admin-modal').style.display = 'none';
+                document.getElementById('news-form').style.display = 'block';
+            } else {
+                alert('Invalid Credentials');
+            }
+        }
+    
+        // Submit News
+        function submitNews(event) {
+            event.preventDefault();
+            const title = document.getElementById('news-title').value;
+            const description = document.getElementById('news-description').value;
+            const imageFile = document.getElementById('news-image').files[0];
+    
+            // Read image as base64
+            const reader = new FileReader();
+            reader.onloadend = function() {
+                const newsItem = {
+                    title,
+                    description,
+                    image: reader.result,
+                    date: new Date().toISOString()
+                };
+    
+                newsItems.push(newsItem);
+                localStorage.setItem('newsItems', JSON.stringify(newsItems));
+                renderNewsItems();
+    
+                // Reset and hide form
+                document.getElementById('news-form').style.display = 'none';
+                event.target.reset();
+                document.getElementById('admin-modal').style.display = 'none';
+            };
+            reader.readAsDataURL(imageFile);
+        }
+    
+        // Initial Render
+        renderNewsItems();
+    </script>
+</body>
+</html>
