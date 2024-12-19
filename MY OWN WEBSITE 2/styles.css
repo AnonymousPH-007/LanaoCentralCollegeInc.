@@ -1,0 +1,326 @@
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+header, section {
+    padding: 20px;
+    margin: 20px auto;
+    max-width: 900px;
+    background: #050505;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+nav ul {
+    display: flex;
+    justify-content: center;
+    list-style: none;
+    padding: 0;
+}
+
+nav ul li {
+    margin: 0 15px;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: #f4000c;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+nav ul li a:hover {
+    color: #fff;
+}
+
+footer {
+    text-align: center;
+    padding: 10px;
+    background: #000;
+    color: #fff;
+}
+
+button.back-btn {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    background-color: var(--secondary-color);
+    color: #000;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s;
+}
+
+button.back-btn:hover {
+    background-color: #21a1f1;
+}
+
+/* Feature section styling */
+.feature-section {
+    text-align: center;
+    margin: 20px auto;
+    padding: 20px;
+    background: #222;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.features {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+.feature {
+    flex: 1 1 200px;
+    max-width: 300px;
+    text-align: center;
+    background: #333;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s;
+}
+
+.feature img {
+    width: 100%;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.feature p {
+    color: #ddd;
+    font-size: 0.9rem;
+}
+
+.feature:hover {
+    transform: scale(1.05);
+}
+
+/* Improved Modal Styling for Large Images */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.9);
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.modal-content {
+    position: relative;
+    margin: 0 auto;
+    max-width: 90%;
+    max-height: 90%;
+    background: #222;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    text-align: center;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.modal-content img {
+    max-width: 100%;
+    max-height: 80vh;
+    object-fit: contain;
+    margin: 20px 0;
+    border-radius: 10px;
+}
+
+.modal-description {
+    padding: 10px;
+    max-width: 90%;
+    word-wrap: break-word;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .modal-content {
+        max-width: 95%;
+        max-height: 95%;
+    }
+    
+    .modal-content img {
+        max-height: 70vh;
+    }
+
+    .navbar {
+        flex-direction: column;
+    }
+
+    .feature-section {
+        flex-direction: column;
+    }
+
+    .directory-item {
+        max-width: 100%;
+    }
+}
+.close {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 2rem;
+    color: #fff;
+    cursor: pointer;
+}
+
+/* Loading spinner for image preloading */
+.modal-content::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 50px;
+    height: 50px;
+    border: 3px solid rgba(255,255,255,0.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s ease-in-out infinite;
+    display: none;
+}
+
+.modal-content.loading::after {
+    display: block;
+}
+
+@keyframes spin {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* Music Player Styling */
+.music-player {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background: #222;
+    color: #fff;
+    text-align: center;
+    padding: 10px;
+    font-size: 1rem;
+    box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.music-player p {
+    margin: 0;
+}
+
+.music-player audio {
+    display: none; /* Hides the audio controls */
+}
+
+.music-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.music-controls button {
+    background-color: #f40612;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.music-controls button:hover {
+    background-color: #e50914;
+}
+
+/* Modern CSS Layouts */
+.navbar {
+    display: flex;
+    justify-content: center;
+    list-style: none;
+    padding: 0;
+}
+
+.navbar li {
+    margin: 0 15px;
+}
+
+.navbar li a {
+    text-decoration: none;
+    color: #fff;
+    transition: color 0.3s;
+}
+
+.navbar li a:hover {
+    color: #e50914;
+}
+
+/* Refresh Color Scheme */
+:root {
+    --primary-color: #282c34;
+    --secondary-color: #61dafb;
+    --text-color: #ffffff;
+    --background-color: #20232a;
+}
+
+/* Subtle Animations */
+.button {
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.button:hover {
+    background-color: var(--secondary-color);
+    transform: translateY(-2px);
+}
+
+/* Optimize Header and Footer */
+header, footer {
+    background-color: var(--primary-color);
+    padding: 20px;
+    text-align: center;
+}
+
+header h1, footer p {
+    margin: 0;
+    color: var(--text-color);
+}
+
+/* Refine Forms and Buttons */
+input, textarea {
+    background-color: #333;
+    border: none;
+    color: #fff;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+input:focus, textarea:focus {
+    outline: none;
+    border: 1px solid var(--secondary-color);
+}
+
+.add-news-btn, .back-btn {
+    background-color: var(--secondary-color);
+    color: #000;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.add-news-btn:hover, .back-btn:hover {
+    background-color: #21a1f1;
+}

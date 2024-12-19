@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .student-container {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-select {
+            padding: 8px;
+            border-radius: 5px;
+            background: #333;
+            color: white;
+            border: 1px solid #444;
+        }
+
+        .add-student-btn {
+            background: #e50914;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .student-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: #222;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            margin: 30px 0;
+        }
+
+        .student-table th, .student-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #444;
+        }
+
+        .student-table th {
+            background: #e50914;
+            color: white;
+            padding: 15px;
+            font-weight: 500;
+        }
+
+        .student-table tr:hover {
+            background: #2a2a2a;
+        }
+
+        .action-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .edit-btn {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .edit-btn:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+        }
+
+        .delete-btn {
+            background: #f44336;
+            color: white;
+        }
+
+        .delete-btn:hover {
+            background: #d32f2f;
+            transform: translateY(-2px);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: #333;
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: white;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 8px;
+            border-radius: 4px;
+            background: #444;
+            border: 1px solid #555;
+            color: white;
+        }
+
+        .search-box {
+            width: 100%;
+            max-width: 300px;
+            padding: 8px;
+            border-radius: 5px;
+            background: #333;
+            border: 1px solid #444;
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .delete-confirm-modal {
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .success-message {
+            background: #4CAF50;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            text-align: center;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* Enhanced Admin Modal Styles */
+        .admin-modal {
+            animation: fadeIn 0.3s ease;
+        }
+
+        .admin-modal .modal-content {
+            background: linear-gradient(145deg, #2a2a2a, #333);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .admin-modal h3 {
+            color: #e50914;
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .admin-modal .form-group {
+            margin-bottom: 20px;
+        }
+
+        .admin-modal input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .admin-modal input:focus {
+            border-color: #e50914;
+            box-shadow: 0 0 0 2px rgba(229, 9, 20, 0.2);
+            outline: none;
+        }
+
+        .admin-modal input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .admin-modal .button-group {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 25px;
+        }
+
+        .admin-modal .login-btn {
+            background: #e50914;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .admin-modal .login-btn:hover {
+            background: #f40612;
+            transform: translateY(-2px);
+        }
+
+        .admin-modal .cancel-btn {
+            background: transparent;
+            color: #fff;
+            padding: 12px 24px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .admin-modal .cancel-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .admin-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 20px;
+            display: block;
+            border-radius: 50%;
+            background: rgba(229, 9, 20, 0.1);
+            padding: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="student-container">
+        <h1>Student Management System</h1>
+
+        <!-- Controls -->
+        <div class="controls">
+            <input type="text" class="search-box" placeholder="Search students..." oninput="filterStudents()">
+            <select class="filter-select" id="yearFilter" onchange="filterStudents()">
+                <option value="">All Years</option>
+                <option value="1st">1st Year</option>
+                <option value="2nd">2nd Year</option>
+                <option value="3rd">3rd Year</option>
+                <option value="4th">4th Year</option>
+            </select>
+            <select class="filter-select" id="courseFilter" onchange="filterStudents()">
+                <option value="">All Courses</option>
+                <option value="BSCS">BS Computer Science</option>
+                <option value="BSIT">BS Information Technology</option>
+                <option value="BSIS">BS Information Systems</option>
+            </select>
+            <button class="add-student-btn" onclick="openAddModal()">Add Student</button>
+        </div>
+
+        <!-- Student Table -->
+        <table class="student-table">
+            <thead>
+                <tr>
+                    <th>Student ID</th>
+                    <th>Name</th>
+                    <th>Year</th>
+                    <th>Course</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="studentTableBody">
+                <!-- Students will be displayed here -->
+            </tbody>
+        </table>
+
+        <!-- Add/Edit Student Modal -->
+        <div id="studentModal" class="modal">
+            <div class="modal-content">
+                <h2 id="modalTitle">Add Student</h2>
+                <form id="studentForm" onsubmit="saveStudent(event)">
+                    <div class="form-group">
+                        <label for="studentId">Student ID:</label>
+                        <input type="text" id="studentId" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="studentName">Name:</label>
+                        <input type="text" id="studentName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="studentYear">Year:</label>
+                        <select id="studentYear" required>
+                            <option value="1st">1st Year</option>
+                            <option value="2nd">2nd Year</option>
+                            <option value="3rd">3rd Year</option>
+                            <option value="4th">4th Year</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="studentCourse">Course:</label>
+                        <select id="studentCourse" required>
+                            <option value="BSCS">BS Computer Science</option>
+                            <option value="BSIT">BS Information Technology</option>
+                            <option value="BSIS">BS Information Systems</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="add-student-btn">Save</button>
+                    <button type="button" class="action-btn" onclick="closeModal()">Cancel</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Admin Login Modal -->
+        <div id="admin-modal" class="modal admin-modal">
+            <div class="modal-content">
+                <svg class="admin-icon" viewBox="0 0 24 24" fill="#e50914">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+                </svg>
+                <h3>Admin Login</h3>
+                <div class="form-group">
+                    <input type="text" id="admin-username" placeholder="Username" autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <input type="password" id="admin-password" placeholder="Password">
+                </div>
+                <div class="button-group">
+                    <button class="cancel-btn" onclick="closeAdminModal()">Cancel</button>
+                    <button class="login-btn" onclick="validateAdmin()">Login</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Delete Confirmation Modal -->
+        <div id="delete-confirm-modal" class="modal delete-confirm-modal">
+            <div class="modal-content">
+                <h3>Confirm Deletion</h3>
+                <p>Please enter admin credentials to delete this student.</p>
+                <div class="form-group">
+                    <input type="text" id="delete-admin-username" placeholder="Admin Username">
+                </div>
+                <div class="form-group">
+                    <input type="password" id="delete-admin-password" placeholder="Admin Password">
+                </div>
+                <div class="modal-buttons">
+                    <button class="action-btn" onclick="closeDeleteModal()">Cancel</button>
+                    <button class="action-btn delete-btn" onclick="authenticateAndDelete()">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button class="back-btn" onclick="location.href='index.html'">Back to Home</button>
+
+    <script>
+        const ADMIN_CREDENTIALS = {
+            username: 'admin',
+            password: 'password'
+        };
+
+        let isAuthenticated = false;
+
+        function validateAdmin() {
+            const username = document.getElementById('admin-username').value;
+            const password = document.getElementById('admin-password').value;
+
+            if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
+                isAuthenticated = true;
+                closeAdminModal();
+                openAddModal(); // Only open add modal after successful authentication
+            } else {
+                alert('Invalid credentials');
+            }
+        }
+
+        function closeAdminModal() {
+            const modal = document.getElementById('admin-modal');
+            modal.classList.add('fade-out');
+            
+            setTimeout(() => {
+                modal.style.display = 'none';
+                modal.classList.remove('fade-out');
+                // Clear inputs
+                document.getElementById('admin-username').value = '';
+                document.getElementById('admin-password').value = '';
+            }, 300);
+        }
+
+        let students = JSON.parse(localStorage.getItem('students')) || [];
+        let editingIndex = -1;
+
+        function displayStudents(filteredStudents = students) {
+            const tbody = document.getElementById('studentTableBody');
+            tbody.innerHTML = '';
+
+            filteredStudents.forEach((student, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${student.id}</td>
+                    <td>${student.name}</td>
+                    <td>${student.year}</td>
+                    <td>${student.course}</td>
+                    <td>
+                        <div style="display: flex; gap: 5px;">
+                            <button class="action-btn edit-btn" onclick="editStudent(${index})">Edit</button>
+                            <button class="action-btn delete-btn" onclick="deleteStudent(${index})">Delete</button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function filterStudents() {
+            const searchText = document.querySelector('.search-box').value.toLowerCase();
+            const yearFilter = document.getElementById('yearFilter').value;
+            const courseFilter = document.getElementById('courseFilter').value;
+
+            const filtered = students.filter(student => {
+                const matchesSearch = student.name.toLowerCase().includes(searchText) ||
+                                    student.id.toLowerCase().includes(searchText);
+                const matchesYear = yearFilter ? student.year === yearFilter : true;
+                const matchesCourse = courseFilter ? student.course === courseFilter : true;
+
+                return matchesSearch && matchesYear && matchesCourse;
+            });
+
+            displayStudents(filtered);
+        }
+
+        function openAddModal() {
+            if (!isAuthenticated) {
+                document.getElementById('admin-modal').style.display = 'flex';
+                return;
+            }
+            document.getElementById('modalTitle').textContent = 'Add Student';
+            document.getElementById('studentForm').reset();
+            document.getElementById('studentModal').style.display = 'flex';
+            editingIndex = -1;
+        }
+
+        function editStudent(index) {
+            if (!isAuthenticated) {
+                document.getElementById('admin-modal').style.display = 'flex';
+                return;
+            }
+            const student = students[index];
+            document.getElementById('modalTitle').textContent = 'Edit Student';
+            document.getElementById('studentId').value = student.id;
+            document.getElementById('studentName').value = student.name;
+            document.getElementById('studentYear').value = student.year;
+            document.getElementById('studentCourse').value = student.course;
+            document.getElementById('studentModal').style.display = 'flex';
+            editingIndex = index;
+        }
+
+        function closeModal() {
+            document.getElementById('studentModal').style.display = 'none';
+            document.getElementById('studentForm').reset();
+            editingIndex = -1;
+        }
+
+        function saveStudent(event) {
+            event.preventDefault();
+
+            const student = {
+                id: document.getElementById('studentId').value,
+                name: document.getElementById('studentName').value,
+                year: document.getElementById('studentYear').value,
+                course: document.getElementById('studentCourse').value
+            };
+
+            if (editingIndex === -1) {
+                students.push(student);
+            } else {
+                students[editingIndex] = student;
+            }
+
+            localStorage.setItem('students', JSON.stringify(students));
+            closeModal();
+            displayStudents();
+        }
+
+        let studentToDelete = null;
+
+        function confirmDelete(index) {
+            studentToDelete = index;
+            document.getElementById('delete-confirm-modal').style.display = 'flex';
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('delete-confirm-modal').style.display = 'none';
+            document.getElementById('delete-admin-username').value = '';
+            document.getElementById('delete-admin-password').value = '';
+            studentToDelete = null;
+        }
+
+        function authenticateAndDelete() {
+            const username = document.getElementById('delete-admin-username').value;
+            const password = document.getElementById('delete-admin-password').value;
+
+            if (username === 'admin' && password === 'password') {
+                if (studentToDelete !== null) {
+                    students.splice(studentToDelete, 1);
+                    localStorage.setItem('students', JSON.stringify(students));
+                    displayStudents();
+                    
+                    // Show success message
+                    const container = document.querySelector('.student-container');
+                    const message = document.createElement('div');
+                    message.className = 'success-message';
+                    message.textContent = 'Student deleted successfully';
+                    container.insertBefore(message, container.firstChild);
+                    
+                    // Remove message after 3 seconds
+                    setTimeout(() => message.remove(), 3000);
+                }
+                closeDeleteModal();
+            } else {
+                alert('Invalid admin credentials');
+            }
+        }
+
+        function deleteStudent(index) {
+            confirmDelete(index);
+        }
+
+        // Initial display
+        displayStudents();
+    </script>
+</body>
+</html>

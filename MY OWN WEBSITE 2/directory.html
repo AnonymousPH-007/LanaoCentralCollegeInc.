@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Directory</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+        }
+
+        .directory-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .directory-item {
+            width: 100%;
+            max-width: 300px;
+            background: #222;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .directory-item:hover {
+            transform: scale(1.02);
+        }
+
+        .directory-image {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+        }
+
+        .directory-content {
+            padding: 15px;
+        }
+
+        .directory-name {
+            color: #e50914;
+            margin-bottom: 10px;
+        }
+
+        .directory-position {
+            color: #ddd;
+        }
+
+        .add-faculty-btn {
+            display: block;
+            width: 200px;
+            margin: 20px auto;
+            padding: 10px;
+            background-color: #e50914;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .add-faculty-btn:hover {
+            background-color: #f40612;
+        }
+
+        .search-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            padding: 10px;
+            width: 80%;
+            max-width: 300px;
+            border: none;
+            border-radius: 5px;
+            background: #333;
+            color: white;
+        }
+
+        #admin-modal, #faculty-form, #delete-confirm-modal, #admin-credentials-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: #222;
+            padding: 30px;
+            border-radius: 10px;
+            width: 300px;
+            text-align: center;
+        }
+
+        .modal-content input,
+        .modal-content textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            background: #333;
+            border: none;
+            color: white;
+            border-radius: 5px;
+        }
+
+        .modal-content button {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #e50914;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .modal-content button:hover {
+            background-color: #f40612;
+        }
+
+        button.back-btn {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    background-color: #e50914;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s;
+}
+
+button.back-btn:hover {
+    background-color: #f40612;
+}
+
+        /* Add new styles */
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .sort-container {
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        .sort-select {
+            padding: 10px;
+            background: #333;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            margin-left: 10px;
+        }
+
+        .error-message {
+            color: #e50914;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        /* Add Modal Styles */
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.7);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes modalFadeOut {
+            from {
+                opacity: 1;
+                transform: scale(1);
+            }
+            to {
+                opacity: 0;
+                transform: scale(0.7);
+            }
+        }
+
+        .faculty-detail-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.8);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .faculty-detail-modal.show {
+            display: block;
+            opacity: 1;
+            animation: modalFadeIn 0.3s ease forwards;
+        }
+
+        .faculty-detail-modal.hide {
+            animation: modalFadeOut 0.3s ease forwards;
+        }
+
+        .faculty-detail-content {
+            position: relative;
+            margin: 10% auto;
+            padding: 20px;
+            max-width: 600px;
+            width: 80%;
+            background: #222;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1 style="text-align: center;">Faculty Directory</h1>
+        <p style="text-align: center;">Meet our dedicated educators</p>
+    </header>
+
+    <main>
+        <section>
+            <div class="search-container">
+                <input type="text" id="search-input" class="search-input" placeholder="Search Faculty..." oninput="filterFaculty()">
+            </div>
+            <div class="sort-container">
+                <label for="sort-select">Sort by:</label>
+                <select id="sort-select" class="sort-select" onchange="sortFaculty()">
+                    <option value="name">Name</option>
+                    <option value="position">Position</option>
+                </select>
+            </div>
+            <button class="add-faculty-btn" onclick="openAdminModal()">
+                Add Faculty (Admin Only)
+            </button>
+
+            <div id="directory-container" class="directory-container">
+                <!-- Faculty items will be dynamically added here -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Admin Login Modal -->
+    <div id="admin-modal" class="admin-modal">
+        <div class="modal-content">
+            <h2>Admin Login</h2>
+            <input type="text" id="login-username" placeholder="Username" required>
+            <input type="password" id="login-password" placeholder="Password" required>
+            <button onclick="loginAdmin()">Login</button>
+            <button onclick="closeAdminModal()">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Faculty Form Modal -->
+    <div id="faculty-form" class="faculty-form">
+        <div class="modal-content">
+            <h2>Add Faculty</h2>
+            <input type="text" id="faculty-name" placeholder="Name" required>
+            <input type="text" id="faculty-position" placeholder="Position" required>
+            <input type="file" id="faculty-image" accept="image/*" required>
+            <textarea id="faculty-bio" placeholder="Bio" required></textarea>
+            <button onclick="addFaculty()">Add Faculty</button>
+            <button onclick="closeFacultyForm()">Cancel</button>
+            <p id="form-error" class="error-message"></p>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-confirm-modal" class="delete-confirm-modal">
+        <div class="modal-content">
+            <h2>Confirm Deletion</h2>
+            <p>Are you sure you want to delete this faculty member?</p>
+            <button onclick="openAdminCredentialsModal()">Delete</button>
+            <button onclick="closeDeleteConfirmModal()">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Admin Credentials Modal -->
+    <div id="admin-credentials-modal" class="admin-credentials-modal">
+        <div class="modal-content">
+            <h2>Admin Credentials</h2>
+            <input type="text" id="admin-username" placeholder="Username" required>
+            <input type="password" id="admin-password" placeholder="Password" required>
+            <button onclick="confirmDelete()">Confirm Delete</button>
+            <button onclick="closeAdminCredentialsModal()">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Add Faculty Detail Modal -->
+    <div id="faculty-detail-modal" class="faculty-detail-modal">
+        <div class="faculty-detail-content">
+            <span class="close" onclick="closeFacultyDetailModal()">&times;</span>
+            <img id="faculty-detail-image" src="" alt="Faculty Image" style="width: 100%; max-height: 400px; object-fit: cover; border-radius: 10px;">
+            <h2 id="faculty-detail-name"></h2>
+            <p id="faculty-detail-position"></p>
+            <p id="faculty-detail-bio"></p>
+        </div>
+    </div>
+
+    <script>
+        const facultyMembers = [];
+        let memberToDelete = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            displayFaculty(facultyMembers);
+        });
+
+        function filterFaculty() {
+            const searchInput = document.getElementById('search-input').value.toLowerCase();
+            const filteredMembers = facultyMembers.filter(member => 
+                member.name.toLowerCase().includes(searchInput) || 
+                member.position.toLowerCase().includes(searchInput)
+            );
+            displayFaculty(filteredMembers);
+        }
+
+        function displayFaculty(members) {
+            const directoryContainer = document.getElementById('directory-container');
+            directoryContainer.innerHTML = '';
+            members.forEach((member, index) => {
+                const item = document.createElement('div');
+                item.className = 'directory-item';
+                item.innerHTML = `
+                    <img src="${member.image}" alt="${member.name}" class="directory-image" 
+                         onclick="openFacultyDetailModal('${member.image}', '${member.name}', '${member.position}', '${member.bio}')">
+                    <div class="directory-content">
+                        <h3 class="directory-name">${member.name}</h3>
+                        <p class="directory-position">${member.position}</p>
+                        <button onclick="openDeleteConfirmModal(${index})">Delete</button>
+                    </div>
+                `;
+                directoryContainer.appendChild(item);
+            });
+        }
+
+        function openAdminModal() {
+            document.getElementById('admin-modal').style.display = 'flex';
+        }
+
+        function closeAdminModal() {
+            document.getElementById('admin-modal').style.display = 'none';
+        }
+
+        function loginAdmin() {
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+
+            // Predefined admin credentials
+            const validUsername = 'admin';
+            const validPassword = 'password123';
+
+            if (username === validUsername && password === validPassword) {
+                closeAdminModal();
+                openFacultyForm();
+            } else {
+                alert('Invalid credentials. Please try again.');
+            }
+        }
+
+        function openFacultyForm() {
+            document.getElementById('faculty-form').style.display = 'flex';
+        }
+
+        function closeFacultyForm() {
+            document.getElementById('faculty-form').style.display = 'none';
+        }
+
+        function addFaculty() {
+            const name = document.getElementById('faculty-name').value;
+            const position = document.getElementById('faculty-position').value;
+            const bio = document.getElementById('faculty-bio').value;
+            const imageInput = document.getElementById('faculty-image');
+            const formError = document.getElementById('form-error');
+            
+            if (!name || !position || !bio || !imageInput.files.length) {
+                alert('Please fill in all fields and select an image.');
+                return;
+            }
+
+            const image = URL.createObjectURL(imageInput.files[0]); // Create a URL for the uploaded image
+
+            const newMember = { name, position, bio, image };
+            facultyMembers.push(newMember);
+            localStorage.setItem('facultyMembers', JSON.stringify(facultyMembers));
+            displayFaculty(facultyMembers);
+            closeFacultyForm();
+        }
+
+        function openDeleteConfirmModal(index) {
+            memberToDelete = index;
+            document.getElementById('delete-confirm-modal').style.display = 'flex';
+        }
+
+        function closeDeleteConfirmModal() {
+            document.getElementById('delete-confirm-modal').style.display = 'none';
+            memberToDelete = null;
+        }
+
+        function openAdminCredentialsModal() {
+            document.getElementById('delete-confirm-modal').style.display = 'none';
+            document.getElementById('admin-credentials-modal').style.display = 'flex';
+        }
+
+        function closeAdminCredentialsModal() {
+            document.getElementById('admin-credentials-modal').style.display = 'none';
+        }
+
+        function confirmDelete() {
+            const adminUsername = document.getElementById('admin-username').value;
+            const adminPassword = document.getElementById('admin-password').value;
+
+            // Predefined admin credentials
+            const validUsername = 'admin';
+            const validPassword = 'password123';
+
+            if (adminUsername === validUsername && adminPassword === validPassword) {
+                if (memberToDelete !== null) {
+                    facultyMembers.splice(memberToDelete, 1);
+                    localStorage.setItem('facultyMembers', JSON.stringify(facultyMembers));
+                    displayFaculty(facultyMembers);
+                    closeAdminCredentialsModal();
+                }
+            } else {
+                alert('Invalid credentials. Please try again.');
+            }
+        }
+
+        function sortFaculty() {
+            const sortSelect = document.getElementById('sort-select').value;
+            facultyMembers.sort((a, b) => {
+                if (a[sortSelect] < b[sortSelect]) return -1;
+                if (a[sortSelect] > b[sortSelect]) return 1;
+                return 0;
+            });
+            displayFaculty(facultyMembers);
+        }
+
+        // Add Modal Management Class
+        class FacultyModalManager {
+            constructor() {
+                this.modal = document.getElementById('faculty-detail-modal');
+                this.isModalOpen = false;
+                this.initEventListeners();
+            }
+
+            initEventListeners() {
+                this.modal.addEventListener('click', (event) => {
+                    if (event.target === this.modal) {
+                        this.closeModal();
+                    }
+                });
+
+                document.addEventListener('keydown', (event) => {
+                    if (event.key === 'Escape' && this.isModalOpen) {
+                        this.closeModal();
+                    }
+                });
+            }
+
+            openModal(image, name, position, bio) {
+                if (this.isModalOpen) return;
+
+                document.getElementById('faculty-detail-image').src = image;
+                document.getElementById('faculty-detail-name').textContent = name;
+                document.getElementById('faculty-detail-position').textContent = position;
+                document.getElementById('faculty-detail-bio').textContent = bio;
+
+                this.modal.style.display = 'block';
+                this.modal.classList.add('show');
+                this.modal.classList.remove('hide');
+                this.isModalOpen = true;
+            }
+
+            closeModal() {
+                if (!this.isModalOpen) return;
+
+                this.modal.classList.remove('show');
+                this.modal.classList.add('hide');
+
+                setTimeout(() => {
+                    this.modal.style.display = 'none';
+                    this.modal.classList.remove('hide');
+                    this.isModalOpen = false;
+                }, 300);
+            }
+        }
+
+        // Initialize modal manager
+        const facultyModalManager = new FacultyModalManager();
+
+        // Global modal functions
+        function openFacultyDetailModal(image, name, position, bio) {
+            facultyModalManager.openModal(image, name, position, bio);
+        }
+
+        function closeFacultyDetailModal() {
+            facultyModalManager.closeModal();
+        }
+    </script>
+    <button class="back-btn" onclick="location.href='index.html'">Back to Home</button>
+</body>
+</html>

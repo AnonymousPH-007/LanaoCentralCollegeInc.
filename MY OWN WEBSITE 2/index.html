@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Website</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto&display=swap">
+    <style>
+        /* Modal Animation Keyframes */
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.7);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes modalFadeOut {
+            from {
+                opacity: 1;
+                transform: scale(1);
+            }
+            to {
+                opacity: 0;
+                transform: scale(0.7);
+            }
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.8);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.show {
+            display: block;
+            opacity: 1;
+            animation: modalFadeIn 0.3s ease forwards;
+        }
+
+        .modal.hide {
+            animation: modalFadeOut 0.3s ease forwards;
+        }
+
+        .modal-content {
+            position: relative;
+            margin: 10% auto;
+            padding: 20px;
+            max-width: 600px;
+            width: 80%;
+            background: #222;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .modal-content::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.1), 
+                transparent
+            );
+            transform: rotate(-45deg);
+            animation: shine 3s infinite linear;
+        }
+
+        @keyframes shine {
+            0% {
+                transform: rotate(-45deg) translateX(-100%);
+            }
+            100% {
+                transform: rotate(-45deg) translateX(100%);
+            }
+        }
+
+        .modal-content img {
+            max-width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            transition: transform 0.3s ease;
+        }
+
+        .modal-content img:hover {
+            transform: scale(1.05);
+        }
+
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            color: #fff;
+            font-size: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close:hover {
+            color: #e50914;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1 style="text-align: center; display: flex; align-items: center; justify-content: center; gap: 20px;">
+            <img src="LCCI LOGO.png" alt="School Logo" style="
+                height: 80px; 
+                width: 80px; 
+                object-fit: contain; 
+                transition: transform 0.3s ease;
+                border-radius: 50%;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            " onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+            
+            <span style="color: #aaa3a4; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">
+                Lanao Central College Inc.
+            </span>
+            
+            <img src="COMSCIE.png" alt="Computer Science Logo" style="
+                height: 80px; 
+                width: 80px; 
+                object-fit: contain; 
+                transition: transform 0.3s ease;
+                border-radius: 50%;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            " onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+        </h1>
+        <nav>
+            <ul class="navbar">
+                <li><a href="homepage.html">Home</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="directory.html">Directory</a></li>
+                <li><a href="events.html">Events</a></li>
+                <li><a href="location.html">Location</a></li>
+                <li><a href="students.html">Students</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Improved Background Music Player -->
+    <div class="music-player">
+        <audio id="background-music" autoplay loop>
+            <source src="Cupid.mp3" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+        <div class="music-controls">
+            <span id="music-title">Now Playing: School Anthem</span>
+            <button onclick="toggleMusic()">Pause/Play</button>
+        </div>
+    </div>
+
+    <main>
+        <section class="feature-section">
+            <h2 style="text-align: center;">Highlights</h2>
+            <div class="features">
+                <div class="feature" onclick="openModal('Students.jpg', 'Students of Lanao Central School is competitive due to school vision.')">
+                    <img src="Students.jpg" alt="School Building">
+                    <p>Students of Lanao Central School is competitive due to school's Vision.</p>
+                </div>
+                <div class="feature" onclick="openModal('Dance.jpg', 'Join a community of students who strive for excellence in education and character.')">
+                    <img src="Dance.jpg" alt="Engaged Students">
+                    <p>Join a community of students who strive for excellence in education and character.</p>
+                </div>
+                <div class="feature" onclick="openModal('Fee.jpg', 'Experience world-class educatition with low tuition fee.')">
+                    <img src="Fee.jpg" alt="Sports Facilities">
+                    <p>Experience world-class educatition with low tuition fee.</p>
+                </div>
+                <div class="feature" onclick="openModal('Courses.jpg', 'Explore our school offered courses and programs to achieve your dreams.')">
+                    <img src="Courses.jpg" alt="Science Lab">
+                    <p>Explore our school's offered courses and programs to achieve your dreams.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Enhanced Modal -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <img id="modal-image" src="" alt="Modal Image">
+            <p id="modal-description"></p>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Lanao Central College Inc. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Modal management
+        class ModalManager {
+            constructor() {
+                this.modal = document.getElementById('modal');
+                this.modalImage = document.getElementById('modal-image');
+                this.modalDescription = document.getElementById('modal-description');
+                this.isModalOpen = false;
+    
+                // Add click outside and keyboard event listeners once
+                this.initEventListeners();
+            }
+    
+            initEventListeners() {
+                // Close modal when clicking outside
+                this.modal.addEventListener('click', (event) => {
+                    if (event.target === this.modal) {
+                        this.closeModal();
+                    }
+                });
+    
+                // Keyboard support
+                document.addEventListener('keydown', (event) => {
+                    if (event.key === 'Escape' && this.isModalOpen) {
+                        this.closeModal();
+                    }
+                });
+            }
+    
+            openModal(imageSrc, description) {
+                // Prevent multiple modal openings
+                if (this.isModalOpen) return;
+    
+                // Preload image
+                const img = new Image();
+                img.onload = () => {
+                    this.modalImage.src = imageSrc;
+                    this.modalDescription.textContent = description;
+                    
+                    // Show modal
+                    this.modal.style.display = 'block';
+                    this.modal.classList.add('show');
+                    this.modal.classList.remove('hide');
+                    
+                    // Update modal state
+                    this.isModalOpen = true;
+                };
+                
+                // Handle image load error
+                img.onerror = () => {
+                    console.error('Image failed to load:', imageSrc);
+                    alert('Unable to load image. Please try again.');
+                };
+    
+                img.src = imageSrc;
+            }
+    
+            closeModal() {
+                if (!this.isModalOpen) return;
+    
+                this.modal.classList.remove('show');
+                this.modal.classList.add('hide');
+    
+                // Reset modal state after animation
+                setTimeout(() => {
+                    this.modal.style.display = 'none';
+                    this.modal.classList.remove('hide');
+                    this.isModalOpen = false;
+                    
+                    // Clear image source to prevent caching issues
+                    this.modalImage.src = '';
+                }, 300);
+            }
+        }
+    
+        // Initialize modal manager
+        const modalManager = new ModalManager();
+    
+        // Modify the global functions to use the modal manager
+        function openModal(imageSrc, description) {
+            modalManager.openModal(imageSrc, description);
+        }
+    
+        function closeModal() {
+            modalManager.closeModal();
+        }
+    
+        // Music player functionality
+        function setupMusicPlayer() {
+            const audio = document.getElementById('background-music');
+            const musicTitle = document.getElementById('music-title');
+    
+            function playMusic() {
+                audio.play().catch(error => {
+                    console.log('Autoplay prevented:', error);
+                    // Optional: Add user interaction listener
+                    document.addEventListener('click', () => {
+                        audio.play();
+                    }, { once: true });
+                });
+            }
+    
+            function toggleMusic() {
+                if (audio.paused) {
+                    audio.play();
+                    musicTitle.textContent = 'Now Playing: School Anthem';
+                } else {
+                    audio.pause();
+                    musicTitle.textContent = 'Paused';
+                }
+            }
+    
+            // Attach toggle function globally
+            window.toggleMusic = toggleMusic;
+    
+            // Try to play on load
+            document.addEventListener('DOMContentLoaded', playMusic);
+        }
+    
+        // Initialize music player
+        setupMusicPlayer();
+    </script>
+</body>
+</html>
